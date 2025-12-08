@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
+import { EmbeddingModelV2Embedding } from "@ai-sdk/provider";
 
 export default function PDFUpload() {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,6 +16,9 @@ export default function PDFUpload() {
     type: "error" | "success";
     text: string;
   } | null>(null);
+
+  const [embeddings, setEmbeddings] = useState<EmbeddingModelV2Embedding[]>([]);
+  const [chunks, setChunks] = useState<string[]>([]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -35,6 +39,8 @@ export default function PDFUpload() {
           text: result.message || "PDF processed successfully",
         });
         e.target.value = "";
+        setChunks(result?.data?.chunks || []);
+        setEmbeddings(result?.data?.embeddings || []);
       } else {
         setMessage({
           type: "error",
@@ -92,6 +98,12 @@ export default function PDFUpload() {
                 </Alert>
               )}
             </div>
+            {message && message.type !== "error" && (
+              <>
+                <div>Chunks: {chunks}</div>
+                <div>Embeddings: {embeddings}</div>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>

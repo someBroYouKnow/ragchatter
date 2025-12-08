@@ -22,7 +22,7 @@ export async function processPdfFile(formData: FormData) {
       };
     }
 
-    const chunks = await chunkContent(result);
+    const chunks = await chunkContent(result.text);
 
     const embeddings = await generateEmbeddings(chunks);
 
@@ -31,10 +31,16 @@ export async function processPdfFile(formData: FormData) {
       embeddings: embeddings[index],
     }));
 
+    console.log({ records });
+
     await db.insert(documents).values(records);
     return {
       success: true,
-      message: `PDF processed successfully. Created ${records.length} chunks`,
+      message: `PDF processed successfully `,
+      data: {
+        embeddings,
+        chunks,
+      },
     };
   } catch (error) {
     console.error(error);
