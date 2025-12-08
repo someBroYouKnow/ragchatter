@@ -10,3 +10,13 @@ export async function generateEmbedding(text: string) {
   });
   return embedding;
 }
+
+export async function generateEmbeddings(texts: string[]) {
+  const inputs = texts.map((text) => text.replace("\n", " "));
+
+  const { embeddings } = await embedMany({
+    model: "gemini-embedding-001",
+    values: inputs,
+  });
+  return embeddings;
+}
